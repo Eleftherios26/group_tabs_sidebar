@@ -352,7 +352,7 @@
           sessions.get(sid).push(log);
         }
 
-        let text = '=== Group Tabs Sidebar V26 – Ιστορικό συμβάντων ===\n\n';
+        let text = '=== Group Tabs Sidebar V26.1.1 – Ιστορικό συμβάντων ===\n\n';
         let sessionIndex = 1;
 
         const sortedSessions = Array.from(sessions.entries()).sort((a, b) => {
