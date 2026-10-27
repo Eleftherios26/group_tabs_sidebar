@@ -1,0 +1,73 @@
+{
+  "manifest_version": 3,
+  "name": "Group Tabs Sidebar",
+  "version": "26.1",
+  "default_locale": "el",
+  "description": "\u039f\u03bc\u03b1\u03b4\u03bf\u03c0\u03bf\u03b9\u03b5\u03af \u03b1\u03c5\u03c4\u03cc\u03bc\u03b1\u03c4\u03b1 \u03c4\u03b9\u03c2 \u03ba\u03b1\u03c1\u03c4\u03ad\u03bb\u03b5\u03c2 \u03b1\u03bd\u03ac domain \u03c3\u03b5 \u03b3\u03c5\u03ac\u03bb\u03b9\u03bd\u03b1 \u03c0\u03bb\u03b1\u03af\u03c3\u03b9\u03b1, \u03bc\u03b5 \u03c5\u03c0\u03bf\u03c3\u03c4\u03ae\u03c1\u03b9\u03be\u03b7 \u03c0\u03bf\u03bb\u03bb\u03b1\u03c0\u03bb\u03ce\u03bd \u03c0\u03b1\u03c1\u03b1\u03b8\u03cd\u03c1\u03c9\u03bd, drag & drop \u03c3\u03c5\u03b3\u03c7\u03ce\u03bd\u03b5\u03c5\u03c3\u03b7, 3D popups, \u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03ba\u03b1\u03c1\u03c4\u03b5\u03bb\u03ce\u03bd \u03ba\u03b1\u03b9 \u03bc\u03b5\u03c4\u03b1\u03c6\u03bf\u03c1\u03ac \u03bc\u03b5\u03c4\u03b1\u03be\u03cd \u03c0\u03b1\u03c1\u03b1\u03b8\u03cd\u03c1\u03c9\u03bd.",
+  "author": "Dimitrios",
+  "incognito": "spanning",
+  "permissions": [
+    "tabs",
+    "storage",
+    "tabHide",
+    "alarms",
+    "notifications"
+  ],
+  "host_permissions": [],
+  "background": {
+    "scripts": [
+      "thread_2_background/services/domain-manager.js",
+      "thread_2_background/services/favicon-cache.js",
+      "thread_2_background/services/central-logger.js",
+      "thread_2_background/diagnostics/error-collector.js",
+      "thread_2_background/diagnostics/health-checker.js",
+      "thread_2_background/diagnostics/live-reporter.js",
+      "thread_2_background/services/toolbar-badge-controller.js",
+      "thread_2_background/services/aboutPageManager.js",
+      "thread_2_background/coordinator_2.js"
+    ]
+  },
+  "action": {
+    "default_title": "Group Tabs Sidebar",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon.svg",
+      "32": "icons/icon.svg",
+      "48": "icons/icon.svg",
+      "96": "icons/icon.svg"
+    }
+  },
+  "sidebar_action": {
+    "default_title": "Group Tabs",
+    "default_panel": "sidebar.html",
+    "default_icon": {
+      "16": "icons/icon.svg",
+      "32": "icons/icon.svg",
+      "48": "icons/icon.svg",
+      "96": "icons/icon.svg"
+    }
+  },
+  "icons": {
+    "16": "icons/icon.svg",
+    "32": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; worker-src 'self';"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "group-tabs-sidebar@Dimitrios.gr",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  }
+}

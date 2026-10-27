@@ -1,0 +1,1151 @@
+/* ============================================================
+   Group Tabs Sidebar V24 – Στρογγυλή πολύχρωμη στεφάνη popup καρτών
+   Χρήση SVG glass αντί για backdrop‑filter (Firefox 151+)
+   V24: Adaptive performance tiers – δραστική μείωση εφέ σε low/medium
+   ============================================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background-attachment: fixed;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.5) 0%, rgba(210,220,240,0.4) 100%) !important;
+  color: #0f0f1a;
+  width: 100%;
+  min-height: 100vh;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4), inset 0 0 30px rgba(0,0,0,0.05) !important;
+  position: relative;
+  padding-bottom: 24px;
+}
+
+/* ---------- macOS Dock reveal animation ---------- */
+#sidebar-root {
+  transform-origin: left center;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+}
+
+#sidebar-root.dock-reveal {
+  animation: dockReveal 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0) both;
+  visibility: visible;
+  opacity: 1;
+}
+
+@keyframes dockReveal {
+  0% { transform: translateX(-100%); opacity: 0; }
+  60% { transform: translateX(0); opacity: 1; }
+  75% { transform: translateX(-10px); }
+  90% { transform: translateX(0); }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* ---------- ΑΝΕΞΑΡΤΗΤΟ ΓΥΑΛΙΝΟ LAYER ---------- */
+#glass-pane {
+  background: rgba(30, 35, 55, 0.2);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  margin: 12px;
+  padding: 10px;
+  min-height: calc(100vh - 24px);
+  box-sizing: border-box;
+  isolation: isolate;
+  position: relative;
+  width: calc(100% - 24px);
+}
+
+/* ---------- ΠΕΡΙΕΧΟΜΕΝΟ ΠΟΥ ΚΛΙΜΑΚΩΝΕΤΑΙ (ΖΟΥΜ) ---------- */
+#content-wrapper {
+  transform-origin: top left;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---------- ΠΙΝΑΚΑΣ ΕΛΕΓΧΟΥ ΕΜΦΑΝΙΣΗΣ ---------- */
+#appearance-panel {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6);
+  opacity: 0.85;
+  transition: opacity 0.2s;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+#appearance-panel:hover { opacity: 1; }
+
+#appearance-panel button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+  color: #1a1a2a;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+#appearance-panel button:hover {
+  background: rgba(255,255,255,0.9);
+  transform: scale(1.05);
+}
+
+#zoom-level {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+  color: #1a1a2a;
+}
+
+/* ---------- ΚΟΥΜΠΙ ΝΕΑΣ ΚΑΡΤΕΛΑΣ ---------- */
+.new-tab-btn {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #333;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483647;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  line-height: 1;
+  padding: 0;
+}
+.new-tab-btn:hover {
+  background: rgba(0,96,223,0.9);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 18px rgba(0,96,223,0.4);
+}
+
+/* ---------- DOMAIN LIST ---------- */
+.domain-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 10px;
+  padding-top: 50px;
+  position: relative;
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* ---------- WINDOW GROUP ---------- */
+.window-group {
+  margin: 8px;
+  border-radius: 20px;
+  background: var(--window-bg, rgba(255,255,255,0.25));
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,0.4);
+  overflow: visible;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  max-width: 100%;
+  box-sizing: border-box;
+  z-index: 1;
+  position: relative;
+}
+.window-group:hover {
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.6);
+}
+
+.window-group::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 22px;
+  border: 2px solid var(--window-bg, rgba(255,255,255,0.4));
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+  z-index: -1;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 20px var(--window-bg, rgba(255,255,255,0.5));
+}
+.window-group:hover::after { opacity: 1; }
+
+.window-group.incognito-window:hover::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 22px;
+  border: 2px solid rgba(180, 100, 255, 0.5);
+  box-shadow: 0 0 20px rgba(128, 0, 128, 0.4), inset 0 0 10px rgba(180, 100, 255, 0.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+  z-index: -1;
+}
+.window-group.incognito-window:hover::before { opacity: 1; }
+
+.window-title {
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #1a1a2a;
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.7);
+  border-radius: 20px 20px 0 0;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.9);
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-left: 52px;
+  padding-right: 36px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.window-domains {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* ---------- GROUP CLOSE BUTTON ---------- */
+.close-group-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(6px);
+  color: #555;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  z-index: 5;
+  opacity: 0.85;
+}
+.close-group-btn:hover {
+  background: #ff4d4d;
+  color: white;
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* ---------- ΕΙΚΟΝΙΔΙΟ ΚΑΤΑΣΤΑΣΗΣ & ΤΙΚ ---------- */
+.window-status-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  z-index: 5;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.active-group-tick {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  font-weight: bold;
+  color: #0060df;
+  text-shadow: 0 0 10px rgba(0,96,223,0.6);
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.window-group.active-window .active-group-tick { opacity: 1; }
+
+/* ---------- DOMAIN ITEMS ---------- */
+.domain-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+  border-radius: 16px;
+  padding: 4px 4px;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  min-width: 0;
+  flex-shrink: 0;
+}
+.domain-item:hover {
+  background: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  outline: none;
+}
+.domain-item.show-popup { z-index: 2147483647 !important; }
+.domain-item.dragging { opacity: 0.5; transform: scale(0.95); }
+.domain-item.drag-over {
+  outline: 2px dashed var(--domain-color, #0060df);
+  outline-offset: 4px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- ICON WRAPPER ---------- */
+.domain-icon-wrapper {
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 200px;
+  transition: transform 0.25s ease;
+  border-radius: 16px;
+  padding: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.domain-icon-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 20px;
+  background: var(--domain-gradient, rgba(255,255,255,0.4));
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 0 15px var(--domain-glow, transparent);
+  border: 1px solid rgba(255,255,255,0.5);
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
+  pointer-events: none;
+  z-index: -1;
+}
+.domain-icon-wrapper:hover::before { opacity: 1; }
+
+.domain-icon-wrapper:hover {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: none;
+}
+.domain-icon-wrapper:hover::before {
+  border: 2px solid var(--domain-color, transparent);
+  box-shadow: 0 0 18px var(--domain-glow, transparent),
+              0 0 30px var(--domain-glow, transparent),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.domain-item:not([style*="--domain-color"]) .domain-icon-wrapper:hover::before {
+  border: 2px solid transparent;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5), inset 0 0 8px rgba(255,255,255,0.2);
+}
+
+/* Active domain */
+.domain-item.active-domain .domain-icon-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 18px;
+  background: var(--domain-gradient, transparent);
+  backdrop-filter: blur(12px) saturate(200%);
+  -webkit-backdrop-filter: blur(12px) saturate(200%);
+  opacity: 1;
+  z-index: -1;
+  box-shadow: 0 0 15px 6px var(--domain-color, transparent);
+}
+.domain-item.active-domain:not([style*="--domain-color"]) .domain-icon-wrapper::after {
+  background: transparent;
+  box-shadow: 0 0 12px 4px rgba(255, 255, 255, 0.7);
+}
+.domain-item.active-domain .domain-favicon {
+  border: 2px solid transparent;
+  border-radius: 14px;
+  transform: scale(1.05) rotateX(2deg) rotateY(-2deg) translateZ(5px);
+}
+
+.domain-icon-wrapper:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-6px) translateZ(12px);
+}
+.domain-icon-wrapper:hover .domain-favicon {
+  transform: rotateX(0deg) rotateY(0deg);
+  box-shadow: 
+    0 15px 0 rgba(0, 0, 0, 0.12),
+    0 15px 25px rgba(0, 0, 0, 0.15),
+    inset 0 -2px 6px rgba(0,0,0,0.03),
+    inset 0 2px 8px rgba(255,255,255,0.9) !important;
+}
+
+/* ---------- FAVICON – ΣΤΑΘΕΡΟ ΜΕΓΕΘΟΣ ---------- */
+.domain-favicon {
+  width: 48px;
+  height: 48px;
+  display: block;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  object-fit: contain;
+  image-rendering: auto;
+  box-shadow: 
+    0 10px 0 rgba(0, 0, 0, 0.1),
+    0 8px 15px rgba(0, 0, 0, 0.1),
+    inset 0 -2px 4px rgba(0,0,0,0.05),
+    inset 0 2px 6px rgba(255,255,255,0.8);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  transition: opacity 0.25s ease;
+  transform: rotateX(2deg) rotateY(-2deg) translateZ(5px);
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));
+  flex-shrink: 0;
+}
+
+/* ---------- BADGE ---------- */
+.badge {
+  position: absolute;
+  top: -10px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(var(--domain-color-rgb, 0, 96, 223), 0.35);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  color: var(--badge-text-color, #fff);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 28px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  box-shadow:
+    0 0 15px var(--domain-glow, rgba(0,96,223,0.7)),
+    0 0 30px var(--domain-glow, rgba(0,96,223,0.5)),
+    inset 0 0 14px rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  transform: translateZ(12px);
+  z-index: 3;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.domain-icon-wrapper:hover .badge {
+  box-shadow:
+    0 0 25px var(--domain-glow, rgba(0,96,223,0.9)),
+    0 0 45px var(--domain-glow, rgba(0,96,223,0.7)),
+    inset 0 0 18px rgba(255, 255, 255, 1);
+  transform: translateZ(12px) scale(1.1);
+}
+
+/* ---------- TREE CHEVRON ---------- */
+.tree-chevron {
+  position: absolute;
+  bottom: -10px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  color: #2e7d32;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 28px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  box-shadow:
+    0 0 15px rgba(0,0,0,0.2),
+    0 0 30px rgba(0,0,0,0.1),
+    inset 0 0 14px rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  transform: translateZ(12px);
+  z-index: 4;
+  transition: box-shadow 0.25s, transform 0.25s, color 0.25s;
+  pointer-events: none;
+}
+.domain-icon-wrapper:hover .tree-chevron {
+  box-shadow:
+    0 0 25px rgba(0,0,0,0.3),
+    0 0 45px rgba(0,0,0,0.15),
+    inset 0 0 18px rgba(255, 255, 255, 1);
+  transform: translateZ(12px) scale(1.1);
+}
+
+/* ---------- CLOSE BUTTONS ---------- */
+.close-domain-btn {
+  width: 24px; height: 24px; border-radius: 50%; border: none;
+  background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(6px);
+  color: #555; font-size: 16px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  opacity: 0; transition: opacity 0.15s, background 0.15s, transform 0.15s;
+  padding: 0; z-index: 5;
+  pointer-events: none;
+}
+.domain-item:hover .close-domain-btn,
+.domain-item.active-domain .close-domain-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+.close-domain-btn:hover { background: #ff4d4d; color: white; transform: scale(1.1); }
+
+.close-tree-btn {
+  width: 20px; height: 20px; border-radius: 50%; border: none;
+  background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(6px);
+  color: #555; font-size: 14px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: background 0.15s, transform 0.15s, color 0.15s; padding: 0; z-index: 5;
+  opacity: 0.8; margin-left: auto;
+}
+.close-tree-btn:hover { background: #ff4d4d; color: white; transform: scale(1.1); opacity: 1; }
+
+/* ============================================================
+   POPUP – Σταθερό γυάλινο φόντο (V15 – SVG glass)
+   ============================================================ */
+.domain-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3ClinearGradient id='highlight' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='white' stop-opacity='0.35'/%3E%3Cstop offset='30%25' stop-color='white' stop-opacity='0.08'/%3E%3Cstop offset='70%25' stop-color='white' stop-opacity='0.02'/%3E%3Cstop offset='100%25' stop-color='white' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3Cfilter id='blurNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='white' opacity='0.15'/%3E%3Crect width='100%25' height='100%25' filter='url(%23blurNoise)' opacity='0.12'/%3E%3Crect width='100%25' height='100%25' fill='url(%23highlight)'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+  min-width: 170px;
+  max-width: calc(100vw - 20px);
+  width: fit-content;
+  padding: 6px 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s;
+  z-index: 2147483647 !important;
+  overflow: hidden;
+}
+
+.single-tab .domain-popup { display: none !important; }
+
+.domain-popup.popup-top { top: auto; bottom: 100%; }
+.domain-popup.popup-left { left: auto; right: 0; }
+
+.domain-item.show-popup .domain-popup {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---------- CAROUSEL ---------- */
+.popup-carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow-y: auto;
+  max-height: 400px;
+  position: relative;
+  width: 100%;
+  padding-right: 4px;
+}
+
+.popup-carousel::-webkit-scrollbar { width: 6px; }
+.popup-carousel::-webkit-scrollbar-track { background: transparent; }
+.popup-carousel::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.6);
+  border-radius: 10px;
+}
+
+/* ---------- ΚΑΡΤΑ ---------- */
+.popup-tab-card {
+  position: relative;
+  width: 100%;
+  min-height: 70px;
+  margin-bottom: -50px;
+  padding: 12px 8px 8px;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3ClinearGradient id='highlight' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='white' stop-opacity='0.45'/%3E%3Cstop offset='40%25' stop-color='white' stop-opacity='0.15'/%3E%3Cstop offset='80%25' stop-color='white' stop-opacity='0.05'/%3E%3Cstop offset='100%25' stop-color='white' stop-opacity='0.15'/%3E%3C/linearGradient%3E%3Cfilter id='blurNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='white' opacity='0.25'/%3E%3Crect width='100%25' height='100%25' filter='url(%23blurNoise)' opacity='0.1'/%3E%3Crect width='100%25' height='100%25' fill='url(%23highlight)'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  box-shadow: 0 8px 0 -3px rgba(0,0,0,0.08), 0 6px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+  cursor: pointer;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.popup-tab-card > *:not(button):not(.close-btn):not(.visibility-btn) {
+  pointer-events: none;
+}
+
+.popup-tab-card:last-child { margin-bottom: 0; }
+
+/* V18 – Στρογγυλή πολύχρωμη στεφάνη μέσω ::before με mask (POPUP CARDS) */
+.popup-tab-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background: conic-gradient(var(--domain-top-colors)) border-box;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) padding-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask: 
+    linear-gradient(#fff 0 0) padding-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  pointer-events: none;
+}
+
+.popup-tab-card:hover::before,
+.popup-tab-card.active-tab::before {
+  opacity: 1;
+  filter: brightness(1.5);
+}
+
+.popup-tab-card:hover {
+  z-index: 50 !important;
+  transform: translateY(-12px) scale(1.02);
+  border-color: transparent;
+  box-shadow: 0 0 18px var(--domain-color, rgba(0,96,223,0.5)),
+              0 20px 30px rgba(0,0,0,0.15);
+}
+
+.popup-tab-card.active-tab {
+  border-color: transparent;
+  box-shadow: 0 0 14px var(--domain-color, rgba(0,96,223,0.6)),
+              0 6px 0 -2px rgba(0,0,0,0.06);
+}
+
+@supports not (background: conic-gradient(red, blue)) {
+  .popup-tab-card::before {
+    display: none;
+  }
+  .popup-tab-card:hover {
+    border-color: var(--domain-color, #0060df);
+    box-shadow: 0 0 18px var(--domain-color, rgba(0,96,223,0.5)),
+                0 20px 30px rgba(0,0,0,0.15);
+  }
+  .popup-tab-card.active-tab {
+    border-color: var(--domain-color, #0060df);
+    box-shadow: 0 0 14px var(--domain-color, rgba(0,96,223,0.6)),
+                0 6px 0 -2px rgba(0,0,0,0.06);
+  }
+}
+
+.popup-tab-card .close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(6px);
+  color: #555;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.popup-tab-card .close-btn:hover {
+  background: #ff4d4d;
+  color: white;
+  transform: scale(1.1);
+}
+
+.card-index {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 22px;
+  height: 22px;
+  background: var(--domain-color, #0060df);
+  color: var(--badge-text-color, #fff);
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 2;
+}
+
+.card-favicon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.4);
+  backdrop-filter: blur(8px);
+  padding: 4px;
+  object-fit: contain;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 3px rgba(255,255,255,0.8);
+  margin-bottom: 6px;
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  max-height: 2.6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  margin-top: 8px;
+  color: #111;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.9);
+}
+
+.card-url {
+  font-size: 9px;
+  color: #444;
+  margin-top: 2px;
+  max-height: 2.6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  line-height: 1.3;
+  opacity: 0.8;
+}
+
+.card-status-icons {
+  display: flex;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+.card-status-icons span {
+  font-size: 16px;
+  line-height: 1;
+}
+
+@media (max-width: 280px) {
+  .domain-popup { min-width: 140px; padding: 4px 2px; }
+  .popup-tab-card { min-height: 60px; margin-bottom: -44px; }
+  .card-favicon { width: 40px; height: 40px; }
+  .card-title { font-size: 10px; }
+  .card-index { width: 18px; height: 18px; font-size: 10px; top: -6px; left: -6px; }
+}
+
+/* ---------- Δέντρο ---------- */
+.domain-item.tree-parent { margin-bottom: 2px; }
+.domain-item.sub-domain-item {
+  margin-left: 32px;
+  border-left: 3px solid var(--domain-color, #0060df);
+  padding-left: 12px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  background: none;
+}
+.domain-item.sub-domain-item .domain-favicon { width: 36px; height: 36px; }
+.domain-item.sub-domain-item .badge { width: 22px; height: 22px; font-size: 10px; line-height: 22px; top: -6px; right: -8px; }
+
+/* ---------- ΙΔΙΩΤΙΚΗ ΠΕΡΙΗΓΗΣΗ ---------- */
+.incognito-indicator {
+  position: absolute;
+  left: 28px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; line-height: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+}
+.window-group.incognito-window {
+  border-color: rgba(180, 100, 255, 0.5) !important;
+  box-shadow: 0 8px 25px rgba(128, 0, 128, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.4) !important;
+}
+.window-group.incognito-window:hover {
+  box-shadow: 0 8px 30px rgba(128, 0, 128, 0.4), inset 0 0 0 2px rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ---------- TAB SYSTEM BADGE ---------- */
+.domain-tab-system-badge {
+  margin-left: auto; padding: 2px 6px; font-size: 10px; font-weight: 600;
+  color: #fff; background: #8e44ad; border-radius: 8px; white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15); flex-shrink: 0;
+  max-width: 80px; overflow: hidden; text-overflow: ellipsis;
+}
+
+@media (max-width: 300px) {
+  .domain-favicon { width: 36px; height: 36px; }
+  .badge { width: 22px; height: 22px; font-size: 10px; line-height: 22px; top: -8px; right: -10px; }
+  #appearance-panel button { width: 26px; height: 26px; font-size: 16px; }
+  #appearance-panel { padding: 4px 8px; gap: 4px; }
+  #zoom-level { font-size: 11px; min-width: 32px; }
+  .new-tab-btn { width: 30px; height: 30px; font-size: 20px; }
+}
+
+/* ---------- UNMERGE SUB BUTTON ---------- */
+.unmerge-sub-btn {
+  width: 20px; height: 20px; border-radius: 50%; border: none;
+  background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(6px);
+  color: #d32f2f; font-size: 14px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  opacity: 0; transition: opacity 0.15s, background 0.15s, transform 0.15s;
+  margin-left: 4px; pointer-events: none;
+}
+.domain-item.sub-domain-item:hover .unmerge-sub-btn,
+.domain-item.sub-domain-item.active-domain .unmerge-sub-btn { opacity: 1; pointer-events: auto; }
+.unmerge-sub-btn:hover { background: #ff4d4d; color: white; transform: scale(1.1); }
+
+/* ---------- TRANSFER TARGET ---------- */
+.window-group.transfer-target {
+  background: var(--window-bg, rgba(255, 255, 255, 0.8)) !important;
+  backdrop-filter: blur(40px) saturate(220%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.1) !important;
+  box-shadow: 
+    0 0 40px var(--window-bg, rgba(255, 255, 255, 0.9)),
+    0 0 80px rgba(255, 255, 255, 0.8),
+    0 0 120px var(--window-bg, rgba(255, 255, 255, 0.6)),
+    inset 0 0 0 4px rgba(255, 255, 255, 0.95),
+    inset 0 0 30px rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(255, 255, 255, 1) !important;
+  transform: scale(1.03);
+  transition: all 0.25s ease;
+  z-index: 10 !important;
+}
+
+/* ---------- INSERTION INDICATOR ---------- */
+.domain-item.drag-insert-before::before,
+.domain-item.drag-insert-after::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 4px;
+  background: linear-gradient(90deg,
+    rgba(0, 150, 255, 0.2) 0%,
+    rgba(0, 150, 255, 0.7) 50%,
+    rgba(0, 150, 255, 0.2) 100%);
+  border-radius: 2px;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow:
+    0 0 10px rgba(0, 150, 255, 0.8),
+    0 0 20px rgba(0, 150, 255, 0.4);
+}
+.domain-item.drag-insert-before::before { top: -4px; bottom: auto; }
+.domain-item.drag-insert-after::after { bottom: -4px; top: auto; }
+
+/* ---------- WATERMARKS ---------- */
+#incognito-watermark, #normal-window-indicator {
+  position: fixed; top: 52px; right: 8px; width: 24px; height: auto;
+  z-index: 9999; opacity: 0.8; pointer-events: none;
+  transition: opacity 0.3s ease;
+  background: none; border: none; box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  border-radius: 0; padding: 0; transform: none; max-width: none;
+}
+#incognito-watermark { filter: drop-shadow(0 0 8px rgba(128, 0, 128, 0.5)); }
+#normal-window-indicator { filter: drop-shadow(0 0 8px rgba(0, 96, 223, 0.3)); }
+
+/* ============================================================
+   V12.4 ENHANCEMENTS (reduced graphics / motion)
+   ============================================================ */
+body.reduced-graphics .domain-popup,
+body.reduced-graphics .window-group,
+body.reduced-graphics .domain-icon-wrapper::before,
+body.reduced-graphics .domain-item.active-domain .domain-icon-wrapper::after,
+body.reduced-graphics .popup-tab-card,
+body.reduced-graphics .badge,
+body.reduced-graphics .close-group-btn,
+body.reduced-graphics .close-domain-btn,
+body.reduced-graphics .close-tree-btn,
+body.reduced-graphics .new-tab-btn,
+body.reduced-graphics .tree-chevron {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+body.reduced-graphics .domain-popup,
+body.reduced-graphics .popup-tab-card {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 1024px), (max-height: 768px) {
+  body {
+    backdrop-filter: blur(8px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(120%) !important;
+  }
+  .window-group, .domain-popup, .popup-tab-card {
+    backdrop-filter: blur(12px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(120%) !important;
+  }
+}
+
+/* ============================================================
+   CUSTOM CONTEXT MENU
+   ============================================================ */
+.context-menu-glass {
+  position: fixed;
+  z-index: 2147483647;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.4);
+  min-width: 200px;
+  max-width: 250px;
+  max-width: 90vw;
+  padding: 6px 0;
+  overflow: hidden;
+}
+.context-menu-item {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #111;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.context-menu-item:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+/* ---------- FORBIDDEN OVERLAY (V14.5) ---------- */
+.forbidden-overlay {
+  position: fixed;
+  z-index: 2147483647;
+  width: 40px;
+  height: 40px;
+  font-size: 28px;
+  line-height: 40px;
+  text-align: center;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3), inset 0 0 0 2px rgba(255,255,255,0.8);
+  display: none;
+}
+#sidebar-signature {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.30);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.5);
+  padding: 6px 10px;
+  opacity: 0.75;
+  transition: opacity 0.3s;
+}
+#sidebar-signature:hover {
+  opacity: 1;
+}
+#sidebar-signature img {
+  display: block;
+  width: 80px;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* ============================================================
+   V15 – FADE ΕΦΕ + ΟΡΙΣΤΙΚΟ GIF FIX (συνεχές micro‑animation)
+   ============================================================ */
+.domain-favicon {
+  transition: opacity 0.25s ease;
+  animation: keep-alive 0.001s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+.domain-favicon[data-pending="true"] {
+  opacity: 0.7;
+}
+.domain-favicon:not([data-pending="true"]) {
+  opacity: 1;
+}
+
+@keyframes keep-alive {
+  0%   { transform: translateZ(0); }
+  100% { transform: translateZ(0); }
+}
+/* ---------- FADE-OUT ΚΑΤΑ ΤΟ OPTIMISTIC CLOSE (V15.2) ---------- */
+.domain-item.removing,
+.tree-children-wrapper.removing,
+.popup-tab-card.removing {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+/* V16: Αποφυγή κάλυψης των groups από την υπογραφή */
+#glass-pane {
+  padding-bottom: 70px;
+}
+/* ============================================================
+   V19 – Fade‑in για νέα domain items (χωρίς layout side‑effects)
+   ============================================================ */
+
+/* Fade‑in: ξεκινάει με opacity 0, η μετάβαση γίνεται μέσω JS */
+.domain-item.fade-in-item {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Fade‑out: εφαρμόζεται μέσω JS (fadingOut dataset) */
+.domain-item[data-fading-out="true"] {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+/* ============================================================
+   V18.1 – ΠΟΛΥΧΡΩΜΗ ΣΤΕΦΑΝΗ ΣΕ DOMAIN ITEMS (hover)
+   ============================================================ */
+.domain-item[style*="--domain-top-colors"]:hover::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  background: conic-gradient(var(--domain-top-colors)) border-box;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) padding-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask: 
+    linear-gradient(#fff 0 0) padding-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 1;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* V18 – Απενεργοποίηση transitions σε groups κατά το patch */
+.window-group.no-transition,
+.window-group.no-transition * {
+  transition: none !important;
+}
+
+/* Αποφυγή αναβοσβήματος ενεργής επισήμανσης σε about: σελίδες */
+.domain-item[data-about="true"].active-domain .domain-icon-wrapper::after {
+    transition: opacity 0.15s ease 0.1s;
+}
+
+/* ============================================================
+   V24 – ADAPTIVE PERFORMANCE TIERS
+   ============================================================ */
+
+/* Low tier: απόλυτη απενεργοποίηση βαρέων εφέ και animations */
+body.perf-low .domain-popup,
+body.perf-low .popup-tab-card,
+body.perf-low .window-group,
+body.perf-low .badge,
+body.perf-low .domain-icon-wrapper::before,
+body.perf-low .domain-item.active-domain .domain-icon-wrapper::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  border: 1px solid rgba(0,0,0,0.1) !important;
+}
+
+body.perf-low .domain-favicon {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+  transform: none !important;
+}
+
+body.perf-low *,
+body.perf-low *::before,
+body.perf-low *::after {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
+/* Medium tier: μειωμένα εφέ */
+body.perf-medium .domain-popup,
+body.perf-medium .popup-tab-card {
+  backdrop-filter: blur(4px) saturate(100%) !important;
+  -webkit-backdrop-filter: blur(4px) saturate(100%) !important;
+}
+
+body.perf-medium .domain-favicon {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+}
+/* V24.6: Απόκρυψη κενών about:home / about:privatebrowsing όταν υπάρχουν άλλα domains */
+.window-group:has(.domain-item:not([data-about="true"])) .domain-item[data-about="true"][data-count="0"] {
+  display: none;
+}

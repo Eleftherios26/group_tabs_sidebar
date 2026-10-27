@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 320px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #1a1a2a;
+      background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(245,250,255,0.9));
+      border-radius: 18px;
+      border: 1px solid rgba(200, 215, 230, 0.7);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 18px;
+      margin: 0;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.9);
+    }
+    .header-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0060df;
+      text-align: center;
+      margin-bottom: 14px;
+      letter-spacing: 0.3px;
+      background: rgba(0,96,223,0.05);
+      border-radius: 12px;
+      padding: 8px 12px;
+      border: 1px solid rgba(0,96,223,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .header-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .version-badge {
+      font-size: 11px;
+      font-weight: 500;
+      background: rgba(0,96,223,0.1);
+      color: #004ba0;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-left: 6px;
+    }
+    .status {
+      font-size: 13px;
+      margin: 8px 0;
+      padding: 8px 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status .badge-icon { font-size: 20px; }
+    .status.active { background: rgba(0, 200, 83, 0.1); border: 1px solid rgba(0, 200, 83, 0.3); color: #0d5722; }
+    .status.closed { background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); color: #6d4c00; }
+    .status.private { background: rgba(244, 67, 54, 0.08); border: 1px solid rgba(244, 67, 54, 0.3); color: #721c24; }
+    .status.update { background: rgba(0, 150, 255, 0.08); border: 1px solid rgba(0, 150, 255, 0.3); color: #0c5460; }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    button.primary { background: #0060df; }
+    button.primary:hover { background: #0050c0; transform: scale(1.02); }
+    button.update-btn { background: #2e7d32; }
+    button.update-btn:hover { background: #1b5e20; transform: scale(1.02); }
+    button.warning-btn { background: #d32f2f; }
+    button.warning-btn:hover { background: #b71c1c; transform: scale(1.02); }
+    .instructions {
+      font-size: 12px;
+      margin-top: 12px;
+      padding: 8px;
+      background: rgba(0,0,0,0.02);
+      border-radius: 10px;
+      color: #555;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .scs-section {
+      margin-top: 16px;
+      border-top: 1px dashed rgba(0,0,0,0.1);
+      padding-top: 12px;
+    }
+    .scs-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s, border-radius 0.2s;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+    .scs-title:hover { background: rgba(0, 96, 223, 0.08); }
+    #scs-logs-container {
+      display: none;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 4px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 8px;
+      padding: 4px;
+      background: rgba(255,255,255,0.7);
+      font-size: 11px;
+      color: #333;
+    }
+    #scs-logs-list { list-style: none; padding: 0; margin: 0; }
+    #scs-logs-list li { padding: 2px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .update-section {
+      margin-top: 16px;
+      border-top: 1px dashed rgba(0,0,0,0.1);
+      padding-top: 12px;
+    }
+    #update-status-text { font-size:13px; font-weight:500; }
+    #restart-btn { display:none; width:100%; margin-top:8px; padding:8px; background:#2e7d32; color:#fff; border:none; border-radius:8px; font-size:13px; cursor:pointer; }
+    #fallback-message { display: block; color: #888; text-align: center; margin-top: 20px; }
+    #export-logs-btn { width:100%; margin-top:8px; padding:8px; background:#0060df; color:#fff; border:none; border-radius:8px; font-size:13px; cursor:pointer; }
+    /* V24: Performance section */
+    #performance-section { margin-top: 16px; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 12px; }
+    #perf-select { width:100%; padding:6px; border-radius:8px; margin-top:4px; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="header-title">
+    <img src="icons/icon.svg" alt="Group Tabs Sidebar" class="header-icon" />
+    Group Tabs Sidebar <span class="version-badge">v26</span>
+  </div>
+
+  <div id="status" class="status active">
+    <span id="badgeIcon" class="badge-icon">⏳</span>
+    <span id="statusText">Έλεγχος...</span>
+  </div>
+
+  <button id="actionBtn" class="primary" style="display:none;">Ενέργεια</button>
+
+  <div id="instructions" class="instructions" style="display:none;"></div>
+
+  <!-- V24: Performance section -->
+  <div id="performance-section">
+    <div class="scs-title">⚡ Απόδοση</div>
+    <div id="performance-status" class="status active">
+      <span id="perfIcon" class="badge-icon">⏳</span>
+      <span id="perfText">Ανίχνευση...</span>
+    </div>
+    <div id="performance-control" style="margin-top:8px;">
+      <label for="perf-select" style="font-size:12px;">Λειτουργία:</label>
+      <select id="perf-select">
+        <option value="auto">Auto</option>
+        <option value="high">Υψηλή</option>
+        <option value="medium">Μεσαία</option>
+        <option value="low">Χαμηλή</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="update-section" class="update-section">
+    <span id="update-status-text">✅ Η επέκταση είναι ενημερωμένη</span>
+    <button id="restart-btn" style="display:none;">🔄 Επανεκκίνηση για ενημέρωση</button>
+  </div>
+
+  <div class="scs-section">
+    <div class="scs-title" id="scs-toggle">🛡️ Sidebar Control Services ▾</div>
+    <div id="scs-status" class="status active">
+      <span id="scsIcon" class="badge-icon">✅</span>
+      <span id="scsText">Κανένα σφάλμα</span>
+    </div>
+    <div id="scs-logs-container">
+      <ul id="scs-logs-list"></ul>
+    </div>
+    <button id="export-logs-btn">📥 Εξαγωγή ιστορικού</button>
+  </div>
+
+  <div id="fallback-message">
+    ⚠️ Το popup δεν φορτώθηκε σωστά. Για debugging, κάντε δεξί κλικ στο popup και επιλέξτε "Inspect" (ή Ctrl+Shift+I στο sidebar).
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
