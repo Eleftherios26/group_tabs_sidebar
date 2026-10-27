@@ -20,12 +20,6 @@
 Μπορείς να εγκαταστήσεις την τελευταία έκδοση απευθείας από το κατάστημα προσθέτων της Mozilla:
 👉 [Group Tabs Sidebar στο Firefox Add-ons](https://addons.mozilla.org/el/firefox/addon/group-tabs-sidebar/)
 
-### 🛠️ Εγκατάσταση για Ανάπτυξη (Development)
-Αν θέλεις να φορτώσεις την επέκταση τοπικά για δοκιμή ή ανάπτυξη:
-1. Κατέβασε ή κάνε clone αυτό το repository.
-2. Άνοιξε τον Firefox και πήγαινε στη διεύθυνση `about:debugging`.
-3. Πάτα **"This Firefox"** και μετά **"Load Temporary Add-on..."**.
-4. Επίλεξε το αρχείο `manifest.json` από τον φάκελο του project.
 
 ## 📄 Άδεια Χρήσης
 Αυτό το project διανέμεται υπό την άδεια **GNU General Public License v3.0 only (GPL-3.0-only)**. 
